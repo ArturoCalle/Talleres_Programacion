@@ -4,29 +4,33 @@
 #include <string>
 void MenuJoinWords()
 {
-	std::string Word;
+	bool MoreWords = true;
 	std::vector<char*>* Words = new std::vector<char*>();
+	std::string Word, Word2;
 	std::cout << "Ingrese una palabra: " << std::endl;
 	std::cin >> Word;
-	char* CWord = new char;
-	*CWord = *Word.c_str();
-	Words->push_back(CWord);
-	bool MoreWords = true;
-	while (MoreWords)
+	std::cout << "Ingrese otra palabra: " << std::endl;
+	std::cin >> Word2;
+	Words->push_back((char*)Word.c_str());
+	Words->push_back((char*)Word2.c_str());
+	/*
+	do
 	{
-		std::cout << "Ingrese otra palabra: " << std::endl;
-		std::cin >> Word;
-		Words->push_back(CWord);
 		char MoreWrds;
+		std::string Word;
+		std::cout << "Ingrese una palabra: " << std::endl;
+		std::cin>> Word;
+		Words->push_back((char*)Word.c_str());
+
 		std::cout << "Desea agregar otra palabra? s/n " << std::endl;
 		std::cin >> MoreWrds;
 		if (MoreWrds == 'n')
 		{
 			MoreWords = false;
 		}
-	}
+	}while (MoreWords);
+	*/
 	char* sentence = Taller::JoinWords(*Words);
-	Taller::PrintWord(sentence, Taller::GetStringLenght(sentence));
 }
 void RotateMatrixMenu(int n)
 {
@@ -44,12 +48,14 @@ void RotateMatrixMenu(int n)
 		}
 	}
 	std::cout << std::endl;
+	std::cout << "Matriz inicial: " << std::endl;
 	for (int i = 0; i < n; i++)
 	{
 		Taller::PrintWord(*(matrix + i), n);
 	}
 	Taller::RotateMatrix(matrix, n, n);
 	std::cout << std::endl;
+	std::cout << "Rotacion de Matriz: " << std::endl;
 	for (int i = 0; i < n; i++)
 	{
 		Taller::PrintWord(*(matrix + i), n);
@@ -66,13 +72,14 @@ void ZeroMatrixMenu(int n, int m)
 		{
 			*(*(mat + i) + j) = (rand() % 8)+1;
 			int v1 = rand() % 100;
-			if (v1 < 2)
+			if (v1 < 8)
 			{
 				*(*(mat + i) + j) = 0;
 			}
 		}
 	}
 	// print matrix 
+	std::cout << "Matriz inicial: " << std::endl;
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < m; j++)
@@ -86,6 +93,7 @@ void ZeroMatrixMenu(int n, int m)
 	Taller::ZeroMatrix(mat, n, m);
 
 	// print matrix 
+	std::cout << "Zero Matrix : " << std::endl;
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < m; j++)
@@ -172,9 +180,10 @@ int main()
 		case 5:
 			{
 				std::cout << "Ingrese una frase: " << std::endl;
-				std::cin >> Word;
-				char* Phrase = new char;
-				*Phrase = *Word.c_str();
+				std::getline(std::cin, Word);
+				std::getline(std::cin, Word);
+				char* Phrase = new char[1024];
+				Phrase = (char*)Word.c_str();
 				Taller::URLify(Phrase);
 				std::cout << "el url de su frase es: ";
 				Taller::PrintWord(Phrase, Taller::GetStringLenght(Phrase));
@@ -183,7 +192,8 @@ int main()
 		case 6:
 			{
 				std::cout << "Ingrese una palabra: " << std::endl;
-				std::cin >> Word;
+				std::getline(std::cin, Word);
+				std::getline(std::cin, Word);
 				bool isPalindromePermut = Taller::PalindromePermut(Word.c_str());
 				if (isPalindromePermut)
 				{
@@ -218,16 +228,18 @@ int main()
 				std::cin >> Word;
 				char* Compress = Taller::StringCompression((char*)Word.c_str());
 				std::cout << "Su palabra comprimida es: ";
-				Taller::PrintWord((char*)Word.c_str(), Taller::GetStringLenght(Word.c_str()));std::cout << "Ingrese un palabra: " << std::endl;
+				Taller::PrintWord(Compress, Taller::GetStringLenght(Compress));
 			}
 			break;
 		case 9:
 			{
 				std::cout << "Ingrese un palabra: " << std::endl;
 				std::cin >> Word;
-				char* Inverted = Taller::StringCompression((char*)Word.c_str());
+				char* Inverted = new char;
+				Inverted = (char*)Word.c_str();
+				Taller::InvertInPlace(Inverted);
 				std::cout << "Su palabra invertida es: ";
-				Taller::PrintWord((char*)Word.c_str(), Taller::GetStringLenght(Word.c_str()));
+				Taller::PrintWord(Inverted, Taller::GetStringLenght(Inverted));
 
 			}
 			break;
@@ -259,11 +271,11 @@ int main()
 				bool isRotation = Taller::StringRotation(Word, Word2);
 				if (isRotation)
 				{
-					std::cout << Word << " y " << Word << " son rotacion" << std::endl;
+					std::cout << Word << " y " << Word2 << " son rotacion" << std::endl;
 				}
 				else
 				{
-					std::cout << Word << " y " << Word << " no son rotacion" << std::endl;
+					std::cout << Word << " y " << Word2 << " no son rotacion" << std::endl;
 				}
 			}
 			break;
@@ -310,6 +322,7 @@ char* Taller::JoinWords(const std::vector<char*>& Words)
 		}
 		
 	}
+	Taller::PrintWord(Sentence, size);
 	return Sentence;
 }
 bool Taller::isUnique(const char* Word)
@@ -484,8 +497,6 @@ void Taller::URLify(char* URL)
 		}
 		counter++;
 	}
-	Taller::PrintWord(aux,auxSize);
-	Taller::PrintWord(URL,counter);
 
 	while (auxSize > auxCounter)
 	{
@@ -493,8 +504,6 @@ void Taller::URLify(char* URL)
 		auxCounter++;
 		counter++;
 	}
-	Taller::PrintWord(aux,auxSize);
-	Taller::PrintWord(URL,counter);
 
 }
 
