@@ -3,6 +3,42 @@
 
 #include <iostream>
 #include <map>
+class LRUCache
+{
+
+};
+class NodeDouble
+{
+    NodeDouble* next = nullptr;
+    NodeDouble* previous = nullptr;
+    int data;
+public:
+    NodeDouble(int d)
+    {
+        data = d;
+    }
+    NodeDouble* deleteMe(NodeDouble* head)
+    {
+        NodeDouble* aux = head;
+        if (head->previous == nullptr)
+        {
+            head->next -> previous == nullptr;
+            head=head->next;
+        }
+        else if(head->next == nullptr)
+        {
+            head->previous->next == nullptr;
+            head = head->previous;
+        }
+        else
+        {
+            head->next->previous = head->previous;
+            head->previous->next = head->next;
+        }
+        delete aux;
+
+    }
+};
 class Node
 {
     Node* next = nullptr;
@@ -365,30 +401,35 @@ public:
         }
         return Sum;
     }
+    
+    bool Palindrome()
+    {
+        int size = this->Size();
+        int half = size / 2;
+        int* copy = new int[half];
+        Node* n = this;
+        if (n != nullptr)
+        {
+            for(int i = 0; i < half ;i++)
+            {
+                copy[i] = n->data;
+                n = n->next;
+            }
+        }
+        if (size % 2 == 1)
+        {
+            n = n->next;
+        }
+        while (n != nullptr)
+        {
+            if (n->data != copy[half-1])
+            {
 
-    bool ExistInList(int data)
-    {
-        Node* n = this;
-        bool doesExist = false;
-        while (n != nullptr)
-        {
-            if (n->data == data)
-                return true;
+                return false;
+            }
+            half--;
             n = n->next;
         }
-        return false;
-    }
-    int MaxValue()
-    {
-        Node* n = this;
-        int max = 0;
-        while (n != nullptr)
-        {
-            if (n->data > max)
-                max = n->data;
-            n = n->next;
-        }
-        return max;
     }
 };
 int main()
@@ -400,21 +441,22 @@ int main()
     {
         node->appendToTail(i);
     }
-    for (int i = 9; i > 4; i--)
+    for (int i = 8; i > 0; i--)
     {
         node->appendToTail(i);
     }
+    node->appendToTail(0);
     for (int i = 6; i < 9; i++)
     {
         node2->appendToTail(i);
     }
     node->printList();
-    node2->printList();
 
     std::cout << "______________" << std::endl;
-    Node* node3 = Node::SumLists2(node, node2);
-    node3->printList();
-    std::cout << "______________" << std::endl;
+    if(node->Palindrome())
+        std::cout << "es palindorme" << std::endl;
+    else
+        std::cout << "no es palindorme" << std::endl;
 
 
 }
