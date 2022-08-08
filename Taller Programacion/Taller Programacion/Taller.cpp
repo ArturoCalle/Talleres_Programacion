@@ -280,7 +280,7 @@ int main()
 			}
 			break;
 		case 13:
-			std::cout << "Migue coleboreme <3 <3 <3." << std::endl;
+			std::cout << "Adios" << std::endl;
 			break;
 
 		default:
@@ -295,13 +295,12 @@ int main()
 int Taller::GetStringLenght(const char* String)
 {
 	int size = 0;
-	char currentCharacter;
-	do
+	char currentCharacter = *(String + size);
+	while (currentCharacter != NULL);
 	{
-		currentCharacter = *(String + size);
 		size++;
-	} while (currentCharacter != NULL);
-	size--;
+		currentCharacter = *(String + size);
+	}
 	return size;
 }
 char* Taller::JoinWords(const std::vector<char*>& Words)
@@ -311,12 +310,9 @@ char* Taller::JoinWords(const std::vector<char*>& Words)
 	for (char* word : Words)
 	{
 		int wordSize = 0;
-		char* letter = new char;
-		*letter = *word;
-		while (*letter != NULL)
+		while (word[wordSize] != NULL)
 		{
-			*letter = *(word + wordSize);
-			*(Sentence + size) = *letter;
+			Sentence [size] = word[wordSize];
 			wordSize++;
 			size++;
 		}
