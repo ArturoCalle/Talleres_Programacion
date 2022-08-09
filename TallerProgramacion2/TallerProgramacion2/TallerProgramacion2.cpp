@@ -2,13 +2,11 @@
 //
 
 #include <iostream>
-#include <map>
-class LRUCache
-{
 
-};
+#include <map>
 class NodeDouble
 {
+public:
     NodeDouble* next = nullptr;
     NodeDouble* previous = nullptr;
     int data;
@@ -17,30 +15,188 @@ public:
     {
         data = d;
     }
-    NodeDouble* deleteMe(NodeDouble* head)
+    NodeDouble* deleteMe(NodeDouble* node)
     {
-        NodeDouble* aux = head;
-        if (head->previous == nullptr)
+        NodeDouble* aux = node;
+        if (node->previous == nullptr)
         {
-            head->next -> previous == nullptr;
-            head=head->next;
+            node=node->next;
+            node->previous = nullptr;
+            return node;
+            
         }
-        else if(head->next == nullptr)
+        else if(node->next == nullptr)
         {
-            head->previous->next == nullptr;
-            head = head->previous;
+            node = node->previous;
+            node->next = nullptr;
+            return this;
+            
         }
         else
         {
-            head->next->previous = head->previous;
-            head->previous->next = head->next;
+            node->next->previous = node->previous;
+            node->previous->next = node->next;
+            return this;
         }
-        delete aux;
+
+        
 
     }
+    NodeDouble* Find(int data)
+    {
+        NodeDouble* n = this;
+        while (n != nullptr)
+        {
+            if (n->data == data)
+            {
+                return n;
+            }
+            n = n->next;
+        }
+        return nullptr;
+    }
+    NodeDouble* Push_Front(int data)
+    {
+        NodeDouble* NewNode = new NodeDouble(data);
+        NodeDouble* n = this;
+
+        if (n != nullptr)
+        {
+            NewNode->next = n;
+            n->previous = NewNode;
+        }
+        else
+        {
+            n = NewNode;
+        }
+        return NewNode;
+    }
+    void printList()
+    {
+        NodeDouble* n = this;
+        while (n != nullptr)
+        {
+            std::cout << n->data << " ";
+            n = n->next;
+        }
+        std::cout << std::endl;
+    }
+    NodeDouble* GetTail()
+    {
+        NodeDouble* n = this;
+        if (n == nullptr)
+            return n;
+        while (n->next != nullptr)
+        {
+            n = n->next;
+        }
+        return n;
+    }
+    int Size()
+    {
+        NodeDouble* n = this;
+        int size = 0;
+        while (n != nullptr)
+        {
+            size++;
+            n = n->next;
+        }
+        return size;
+    }
+};
+class LRUCache
+{
+    NodeDouble* head;
+    NodeDouble* tail;
+    int CacheSize;
+    int CurrentSize;
+    std::map<int, const char*> Map;
+
+public:
+    LRUCache(int Size)
+    {
+        CacheSize = Size;
+        CurrentSize = 0;
+        head = nullptr;
+        tail = nullptr;
+    }
+    void Store(int x, const char* data)
+    {
+        if (head == nullptr)
+        {
+            //sets the first element
+            CurrentSize++;
+            head = head->Push_Front(x);
+            tail = head;
+
+            //add to map
+            Map[x] = data;
+        }
+        else if (CurrentSize < CacheSize)
+        {
+            //adds element to the double linked list
+            CurrentSize++;
+            head = head->Push_Front(x);
+            
+            //add to map
+            Map[x] = data;
+        }
+        else
+        {
+            //add new to list
+            head = head->Push_Front(x);
+            tail = head->GetTail();
+            //remove least used from map
+            Map.erase(tail->data);
+            Map[x] = data;
+
+            //deletes the least used
+            NodeDouble* aux = tail;
+            tail = tail->previous;
+            tail->next = nullptr;
+            delete aux;   
+        }
+
+    }
+    const char* Refer(int x)
+    {
+        NodeDouble* n = head->Find(x);
+        if (n != nullptr)
+        {
+            //moves node from any position to head, as its the most recently used
+            head = head->deleteMe(n);
+            head = head->Push_Front(n->data);
+            
+
+            //returns data assosiated to the searched value
+            const char* data = Map[n->data];
+            return data;
+
+        }
+        return NULL;
+
+    }
+    void Display()
+    {
+        NodeDouble* n = head;
+        while (n != nullptr)
+        {
+            std::cout << n->data << ": ";
+            const char* value = Map[n->data];
+            while(*value != NULL)
+            {
+                std::cout << *value;
+                value++;
+            }
+            std::cout << std::endl;
+            n = n->next;
+        }
+    }
+
 };
 class Node
 {
+public:
     Node* next = nullptr;
     int data;
 public:
@@ -71,6 +227,19 @@ public:
         return counter;
     }
 
+    Node* Clear()
+    {
+        if (this == nullptr)
+            return nullptr;
+        Node* n = this;
+        while (n != nullptr)
+        {
+            Node* aux = n;
+            n = n->next;
+            delete aux;
+        }
+        return nullptr;
+    }
     
     void appendToTail(int d)
     {
@@ -261,8 +430,6 @@ public:
             {
                 n = n->next;
             }
-            this->printList();
-            ToLastHead->printList();
         }
         if (ToLastHead != nullptr)
         {
@@ -434,29 +601,212 @@ public:
 };
 int main()
 {
-    std::cout << "Hello World!\n";
+    /*Insertion of a list ___________________________________________________________________________________________________________________________________________
+    */
     Node* node = new Node(0);
-    Node* node2 = new Node(3);
+    for (int i = 1; i < 6; i++)
+    {
+        node->appendToTail(i);
+    }
+    std::cout << "list: " << std::endl;
+    node->printList();
+    std::cout << std::endl;
+
+    /*Element Extraction ____________________________________________________________________________________________________________________________________________
+    */
+    std::cout << "Element Extraction (3): " << std::endl;
+    int element = node->extractElementAt(node, 3);
+    std::cout << "Element: " << element << std::endl;
+    std::cout << "list: " << std::endl;
+    node->printList();
+    std::cout << std::endl;
+
+    /*Duplicate Removal _______________________________________________________________________________________________________________________________________________
+    */
+    std::cout << "Duplicate Removal Fast: " << std::endl;
+    for (int i = 5; i < 9; i++)
+    {
+        node->appendToTail(i);
+    }
+    for (int i = 2; i < 6; i++)
+    {
+        node->appendToTail(i);
+    }
+    std::cout << "list: " << std::endl;
+    node->printList();
+    node->RemoveDuplicatesFast();
+    std::cout << "elements removed list: " << std::endl;
+    node->printList();
+    std::cout << std::endl;
+
+    /*Duplicate Removal Memory rather than performance _______________________________________________________________________________________________________________
+    */
+    std::cout << "Duplicate Removal Memory: " << std::endl;
+    for (int i = 5; i < 9; i++)
+    {
+        node->appendToTail(i);
+    }
+    for (int i = 2; i < 6; i++)
+    {
+        node->appendToTail(i);
+    }
+    std::cout << "list: " << std::endl;
+    node->printList();
+    node->RemoveDuplicatesMemory();
+    std::cout << "Duplicate removed list: " << std::endl;
+    node->printList();
+    std::cout << std::endl;
+
+    /*Return the Kth element to last _____________________________________________________________________________________________________________________________________
+    */
+    std::cout << "Kth element to last (4): " << std::endl;
+    std::cout << "list: " << std::endl;
+    node->printList();
+    Node* kth = node->Kth_ToLast(4);
+    std::cout << "kth element: " << kth->data << std::endl;
+    std::cout << std::endl;
+
+    /*List Partition  _____________________________________________________________________________________________________________________________________
+    */
+    std::cout << "List partition X = 4: " << std::endl;
+    for (int i = 5; i < 9; i++)
+    {
+        node->appendToTail(i);
+    }
+    for (int i = 0; i < 5; i++)
+    {
+        node->appendToTail(i);
+    }
+    std::cout << "list: " << std::endl;
+    node->printList();
+    node->Partition(4);
+    std::cout << "partition list: " << std::endl;
+    node->printList();
+    std::cout << std::endl;
+
+    /*Sum Lists  _____________________________________________________________________________________________________________________________________
+    */
+    node->Clear();
+    std::cout << "List Sum: " << std::endl;
+    node = new Node(3);
     for (int i = 1; i < 4; i++)
     {
         node->appendToTail(i);
     }
-    for (int i = 8; i > 0; i--)
-    {
-        node->appendToTail(i);
-    }
-    node->appendToTail(0);
-    for (int i = 6; i < 9; i++)
+    Node* node2 = new Node(4);
+    for (int i = 9; i > 2; i--)
     {
         node2->appendToTail(i);
     }
+    std::cout << "list1: " << std::endl;
     node->printList();
+    std::cout << "list2: " << std::endl;
+    node2->printList();
+    Node* Sum = Node::SumLists(node, node2);
+    std::cout << "Sum: " << std::endl;
+    Sum->printList();
+    std::cout << std::endl;
 
-    std::cout << "______________" << std::endl;
-    if(node->Palindrome())
-        std::cout << "es palindorme" << std::endl;
+    /*Sum Lists  _____________________________________________________________________________________________________________________________________
+    */
+    node->Clear();
+    node2->Clear();
+    Sum->Clear();
+
+    std::cout << "List Sum2: " << std::endl;
+    node = new Node(3);
+    for (int i = 8; i > 2; i--)
+    {
+        node->appendToTail(i);
+    }
+    node2 = new Node(4);
+    for (int i = 9; i > 2; i--)
+    {
+        node2->appendToTail(i);
+    }
+    std::cout << "list1: " << std::endl;
+    node->printList();
+    std::cout << "list2: " << std::endl;
+    node2->printList();
+    Sum = Node::SumLists2(node, node2);
+    std::cout << "Sum: " << std::endl;
+    Sum->printList();
+    std::cout << std::endl;
+
+    /*Sum Lists  _____________________________________________________________________________________________________________________________________
+    */
+    node->Clear();
+    node2->Clear();
+    Sum->Clear();
+
+    std::cout << "Palindrome: " << std::endl;
+    node = new Node(0);
+    for (int i = 1; i < 4; i++)
+    {
+        node->appendToTail(i);
+    }
+    for (int i = 4; i >= 0; i--)
+    {
+        node->appendToTail(i);
+    }
+    std::cout << "list: " << std::endl;
+    node->printList();
+    if (node->Palindrome())
+    {
+        std::cout << "is Palindrome: " << std::endl;
+    }
     else
-        std::cout << "no es palindorme" << std::endl;
+    {
+        std::cout << "is not Palindrome " << std::endl;
+    }
+    std::cout << std::endl;
+    
+
+    node->Clear();
+    node = new Node(0);
+    for (int i = 1; i < 2; i++)
+    {
+        node->appendToTail(i);
+    }
+    for (int i = 3; i >= 1; i--)
+    {
+        node->appendToTail(i);
+    }
+    std::cout << "list: " << std::endl;
+    node->printList();
+    if (node->Palindrome())
+    {
+        std::cout << "is Palindrome: " << std::endl;
+    }
+    else
+    {
+        std::cout << "is not Palindrome " << std::endl;
+    }
+    std::cout << std::endl;
+
+
+    /*Demo Cache
+    */
+    LRUCache* cache = new LRUCache(3);
+
+    std::string word =  "Pedro" + NULL;
+    cache->Store(1, word.c_str());
+    std::string word2 =  "Pablo" + NULL;
+    cache->Store(2, word2.c_str());
+    std::string word3 =  "Juan" + NULL;
+    cache->Store(3, word3.c_str());
+    cache->Display();
+    std::cout << std::endl;
+
+    std::string word4 = cache->Refer(1);
+    cache->Display();
+    std::cout << std::endl;
+
+    std::string word5 = "Julian" + NULL;
+    cache->Store(4, word5.c_str());
+    cache->Display();
+    std::cout << std::endl;
+
 
 
 }
