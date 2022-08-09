@@ -295,11 +295,11 @@ int main()
 int Taller::GetStringLenght(const char* String)
 {
 	int size = 0;
-	char currentCharacter = *(String + size);
+	char currentCharacter = String[size];
 	while (currentCharacter != NULL);
 	{
 		size++;
-		currentCharacter = *(String + size);
+		currentCharacter = String[size];
 	}
 	return size;
 }
@@ -323,9 +323,23 @@ char* Taller::JoinWords(const std::vector<char*>& Words)
 }
 bool Taller::isUnique(const char* Word)
 {
-	int size = Taller::GetStringLenght(Word);
-	return Taller::isUniqueDivide((char*)Word,size);
-
+	int CurrentStart = 1;
+	char* iterator = (char*) Word;
+	while (*iterator != NULL)
+	{
+		int size = CurrentStart;
+		while(Word[size]!= NULL)
+		{
+			if (*iterator == Word[size])
+			{
+				return false;
+			}
+			size++;
+		}
+		CurrentStart++;
+		iterator++;
+	}
+	return true;
 }
 bool Taller::isUniqueDivide( char* Word, int size)
 {
@@ -415,7 +429,7 @@ void Taller::PrintWord(char* word, int size)
 {
 	for (int i = 0; i < size; i++)
 	{
-		std::cout << *(word + i);
+		std::cout << word[i];
 	}
 	std::cout << std::endl;
 }
@@ -432,14 +446,14 @@ bool  Taller::CheckPermutation(const char* Word, const char* Word2)
 	char* Word2Copy = new char[Size];
 	for (int i = 0; i < Size; i++)
 	{
-		Word2Copy[i] = *(Word2 + i);
+		Word2Copy[i] = Word[i];
 	}
 	int succes = 0;
 	for (int i = 0; i < Size; i++)
 	{
 		for (int j = 0; j < Size; j++)
 		{
-			if (*(Word + i) == Word2Copy[j])
+			if (Word[i] == Word2Copy[j])
 			{
 				Word2Copy[j] = NULL;
 				succes++;
@@ -469,7 +483,7 @@ void Taller::URLify(char* URL)
 		bufferLetter = *(URL + counter);
 		if (bufferLetter != ' ')
 		{
-			*(aux + auxSize) = bufferLetter;
+			aux[auxSize] = bufferLetter;
 			if (auxSize != 0)
 			{
 				auxSize++;
@@ -477,16 +491,16 @@ void Taller::URLify(char* URL)
 		}
 		else
 		{
-			*(aux + auxSize) = '%';
+			aux[auxSize] = '%';
 			auxSize++;
-			*(aux + auxSize) = '2';
+			aux[auxSize] = '2';
 			auxSize++;
-			*(aux + auxSize) = '0';
+			aux[auxSize] = '0';
 			auxSize++;
 			
 		}
 
-		*(URL + counter) = *(aux + auxCounter);
+		URL[counter] = aux[auxCounter];
 		if (auxSize != 0)
 		{
 			auxCounter++;
@@ -496,7 +510,7 @@ void Taller::URLify(char* URL)
 
 	while (auxSize > auxCounter)
 	{
-		*(URL + counter) = *(aux + auxCounter);
+		URL[counter] = aux[auxCounter];
 		auxCounter++;
 		counter++;
 	}
@@ -519,9 +533,9 @@ bool Taller::PalindromePermut(const char* Word)
 		{
 			for (int i = min; i < max; i++)
 			{
-				if (letterBuffer == *(aux+i))
+				if (letterBuffer == aux[i])
 				{
-					*(aux + i) = *(aux + min);
+					aux[i] = aux[min];
 					min++;
 					bhasFoundPair = true;
 					break;
@@ -529,12 +543,12 @@ bool Taller::PalindromePermut(const char* Word)
 			}
 			if (!bhasFoundPair)
 			{
-				*(aux + max) = letterBuffer;
+				aux[max] = letterBuffer;
 				max++;
 			}
 		}
 		WordIterator++;
-		letterBuffer = *(Word + WordIterator);
+		letterBuffer = Word[WordIterator];
 	}
 	std::cout << "min: " << min << " max: " << max << std::endl;
 	if ((max - min > 1))
@@ -556,7 +570,7 @@ bool Taller::OneWay(char* Word1, char* Word2)
 	char* Word2Copy = new char[size1];
 	for (int i = 0; i < size2; i++)
 	{
-		Word2Copy[i] = *(Word2 + i);
+		Word2Copy[i] = Word2[i];
 	}
 	for (int i = 0; i < size1; i++)
 	{
@@ -564,9 +578,9 @@ bool Taller::OneWay(char* Word1, char* Word2)
 		{
 			if (*(Word2 + j) != NULL)
 			{
-				if (*(Word2Copy + j) == *(Word1 + i))
+				if (Word2Copy[j] == Word2[i])
 				{
-					*(Word2Copy + j) = NULL;
+					Word2Copy[j] = NULL;
 					success++;
 					break;
 				}
@@ -589,22 +603,22 @@ char* Taller::StringCompression(char* Word)
 	char CurrentLetter;
 	for (int i = 0; i < size; i++)
 	{
-		CurrentLetter = *(Word+i);
-		if(CurrentLetter == *(Word+i+1))
+		CurrentLetter = Word[i]);
+		if(CurrentLetter == Word[i+1])
 		{
 			CurrentLetterRepetition++;
 		}
 		else
 		{
-			*(CompressedWord+CompressedPos) = CurrentLetter;
+			CompressedWord[CompressedPos] = CurrentLetter;
 			 CompressedPos++;
-			*(CompressedWord+CompressedPos) = CurrentLetterRepetition+48;
+			CompressedWord[CompressedPos] = CurrentLetterRepetition+48;
 			CurrentLetterRepetition = 1;
 			CompressedPos++;
 
 		}
 	}
-	*(CompressedWord + CompressedPos) = NULL;
+	CompressedWord[CompressedPos] = NULL;
 	if (CompressedPos > size)
 	{
 		return Word;
@@ -632,9 +646,6 @@ void Taller::RotateMatrix(char** matrix, int n, int m)
 {
 	n--;
 	m--;
-	
-	
-
 	for (int i = 0; i <= m/2; i++)
 	{
 		
