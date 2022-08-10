@@ -296,8 +296,13 @@ int Taller::GetStringLenght(const char* String)
 {
 	int size = 0;
 	char currentCharacter = String[size];
-	while (currentCharacter != NULL);
+	while (currentCharacter != NULL)
 	{
+		
+		if (currentCharacter < 32 || currentCharacter > 126)
+		{
+			return size;
+		}
 		size++;
 		currentCharacter = String[size];
 	}
@@ -427,6 +432,7 @@ bool Taller::isUniqueCompareWords(const char* Word, int size, const char* Word2,
 }
 void Taller::PrintWord(char* word, int size)
 {
+	std::cout << size;
 	for (int i = 0; i < size; i++)
 	{
 		std::cout << word[i];
@@ -480,6 +486,7 @@ void Taller::URLify(char* URL)
 
 	while (bufferLetter != NULL)
 	{
+		std::cout << bufferLetter;
 		bufferLetter = *(URL + counter);
 		if (bufferLetter != ' ')
 		{
@@ -507,13 +514,13 @@ void Taller::URLify(char* URL)
 		}
 		counter++;
 	}
-
 	while (auxSize > auxCounter)
 	{
 		URL[counter] = aux[auxCounter];
 		auxCounter++;
 		counter++;
 	}
+	URL[counter] = NULL;
 
 }
 
@@ -603,7 +610,7 @@ char* Taller::StringCompression(char* Word)
 	char CurrentLetter;
 	for (int i = 0; i < size; i++)
 	{
-		CurrentLetter = Word[i]);
+		CurrentLetter = Word[i];
 		if(CurrentLetter == Word[i+1])
 		{
 			CurrentLetterRepetition++;
