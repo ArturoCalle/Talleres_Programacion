@@ -214,11 +214,11 @@ int main()
 				bool areOneWay = Taller::OneWay((char* )Word.c_str(), (char*)Word2.c_str());
 				if (areOneWay)
 				{
-					std::cout << Word << " y " << Word << " estan a 1 paso de edicion" << std::endl;
+					std::cout << Word << " y " << Word2 << " estan a 1 paso de edicion" << std::endl;
 				}
 				else
 				{
-					std::cout << Word << " y " << Word << " estan a mas de 1 paso de edicion" << std::endl;
+					std::cout << Word << " y " << Word2 << " estan a mas de 1 paso de edicion" << std::endl;
 				}
 			}
 			break;
@@ -432,7 +432,6 @@ bool Taller::isUniqueCompareWords(const char* Word, int size, const char* Word2,
 }
 void Taller::PrintWord(char* word, int size)
 {
-	std::cout << size;
 	for (int i = 0; i < size; i++)
 	{
 		std::cout << word[i];
