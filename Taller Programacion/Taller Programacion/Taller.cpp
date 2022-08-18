@@ -570,40 +570,65 @@ bool Taller::OneWay(char* Word1, char* Word2)
 	int size1 = Taller::GetStringLenght(Word1);
 	int size2 = Taller::GetStringLenght(Word2);
 
-	int success = 0;
+	int diferences = 0;
 
-	//Duplicate word 2
-	char* Word2Copy = new char[size1];
-	for (int i = 0; i < size2; i++)
+	if ((int)std::abs(size1 - size2) > 1)
+		return false;
+
+	if ((size1 - size2) != 0)
 	{
-		Word2Copy[i] = Word2[i];
-	}
-	for (int i = 0; i < size1; i++)
-	{
-		for (int j = 0; j < size2; j++)
+		if (size1 > size2)
 		{
-			if (*(Word2 + j) != NULL)
+			for (int i = 0; i < size2; i++)
 			{
-				if (Word2Copy[j] == Word2[i])
+				if (Word1[i+diferences] != Word2[i])
 				{
-					Word2Copy[j] = NULL;
-					success++;
-					break;
+					diferences++;
+				}
+				if (diferences > 1)
+				{
+					return false;
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < size1; i++)
+			{
+				if (Word1[i] != Word2[i + diferences])
+				{
+					diferences++;
+				}
+				if (diferences > 1)
+				{
+					return false;
 				}
 			}
 		}
 	}
-	if (size2-success > 1)
+	else
+	{
+		for (int i = 0; i < size1; i++)
+		{
+			if (Word1[i] != Word2[i])
+			{
+				diferences++;
+			}
+		}
+	}
+
+	if (diferences > 1)
 	{
 		return false;
 	}
 	return true;
+
 }
 
 char* Taller::StringCompression(char* Word)
 {
 	int size = Taller::GetStringLenght(Word);
-	char* CompressedWord = new char[size*2];
+	char* CompressedWord = new char[size*2 +1];
 	int CompressedPos = 0;
 	int CurrentLetterRepetition = 1;
 	char CurrentLetter;
